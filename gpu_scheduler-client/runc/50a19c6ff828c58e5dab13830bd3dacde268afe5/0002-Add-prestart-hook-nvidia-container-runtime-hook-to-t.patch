@@ -1,0 +1,46 @@
+From b65733155b4c957ce542b781886fbf60fb2b339e Mon Sep 17 00:00:00 2001
+From: Felix Abecassis <fabecassis@nvidia.com>
+Date: Wed, 20 Sep 2017 09:58:44 -0700
+Subject: [PATCH 2/2] Add prestart hook nvidia-container-runtime-hook to the
+ config
+
+---
+ utils.go | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/utils.go b/utils.go
+index 55a7e9d..ccbca80 100644
+--- a/utils.go
++++ b/utils.go
+@@ -3,6 +3,7 @@ package main
+ import (
+ 	"fmt"
+ 	"os"
++	"os/exec"
+ 
+ 	"github.com/Sirupsen/logrus"
+ 	"github.com/opencontainers/runtime-spec/specs-go"
+@@ -30,6 +31,20 @@ func setupSpec(context *cli.Context) (*specs.Spec, error) {
+ 	if err != nil {
+ 		return nil, err
+ 	}
++
++	path, err := exec.LookPath("nvidia-container-runtime-hook")
++	if err != nil {
++		return nil, err
++	}
++	args := []string{path, "-prestart"}
++	if context.GlobalBool("debug") {
++		args = append(args, "-debug")
++	}
++	spec.Hooks.Prestart = append(spec.Hooks.Prestart, specs.Hook{
++		Path: path,
++		Args: args,
++	})
++
+ 	notifySocket := os.Getenv("NOTIFY_SOCKET")
+ 	if notifySocket != "" {
+ 		setupSdNotify(spec, notifySocket)
+-- 
+2.7.4
+

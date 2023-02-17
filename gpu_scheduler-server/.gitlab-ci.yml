@@ -1,0 +1,14 @@
+stages:
+- deploy
+deploy:
+  stage: deploy
+  script:
+    - sh build.sh
+  only:
+    - dev
+  tags:
+    - shell
+trigger:
+  type: deploy
+  script:
+    - "curl -X POST -F token=fcc36be236c3cc2e69ae80c4edb36a http://gitlab.tools.vipshop.com/ci/api/v1/projects/12/refs/master/trigger"    

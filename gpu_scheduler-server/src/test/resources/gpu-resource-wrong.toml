@@ -1,0 +1,10 @@
+[[hosts]]
+name = ""
+gpus = [ 0, 1, 2,]
+ip = "127.0.0.1"
+
+[[hosts]]
+name = ""
+gpus = [ 0, 1, 2, 3,]
+ip = "127.0.0.2"
+whatever = "none"
